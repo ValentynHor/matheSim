@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments :: page_head('exams')}" />
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="~{navigation :: menu}" />
+    </header>
+
+    <h2 class="text-center">Testergebnisse:</h2>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+
+    <th:block sec:authorize="hasAuthority('Admin') or hasAuthority('Teacher')">
+
+        <table class="table table-bordered" style="width: 500px">
+            <thead>
+            <tr>
+                <th>Students</th>
+                <th>Tests</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="userEntry : ${userExamTryCountMap}">
+                <tr>
+                    <td th:text="${userEntry.key.email}"></td>
+                    <td>
+                        <ul>
+                            <th:block th:each="examEntry : ${userEntry.value}">
+                                <li>
+                                    Test (<strong>ID:[[${examEntry.key.id}]]</strong>)
+                                    <ul>
+                                        <th:block th:each="tryCount : ${examEntry.value}">
+                                            <li>
+                                                <th:block th:with="versionNr=${tryCount + 1}">
+                                                    <a th:text="'Versuchsanzahl: ' + ${versionNr}"
+                                                       th:href="@{'/results/userId/' + ${userEntry.key.id} + '/examId/' + ${examEntry.key.id} + '/' + ${tryCount}}"></a>
+                                                </th:block>
+                                            </li>
+                                        </th:block>
+                                    </ul>
+                                </li>
+                            </th:block>
+                        </ul>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+
+
+
+
+
+
+
+
+        </table>
+
+
+    </th:block>
+
+    <th:block sec:authorize="hasAuthority('Student')">
+
+        <th:block th:with="examTryCountMap=${examTryCountMap}">
+            <div style="width: 500px">
+                <div th:each="entry : ${examTryCountMap}">
+                    <p>Test (ID:<strong>[[${entry.key.id}]]</strong>)</p>
+                    <ul>
+                        <li th:each="tryCount : ${entry.value}">
+                            <th:block th:with="versionNr=${tryCount + 1}">
+                                <a th:text="'Versuchsanzahl: ' + ${versionNr}"
+                                   th:href="@{'/results/userId/' + ${userId} + '/examId/' + ${entry.key.id} + '/' + ${tryCount}}"></a>
+                            </th:block>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </th:block>
+
+
+    </th:block>
+
+
+
+
+    <div th:replace="~{fragments :: footer}" />
+
+
+
+</div>
+
+</body>
+</html>

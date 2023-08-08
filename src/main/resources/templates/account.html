@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en">
+
+<head th:replace="fragments :: page_head(${pageTitle})" />
+
+<body>
+<div class="container-fluid">
+
+  <header>
+    <div th:replace="navigation :: menu" />
+  </header>
+
+  <br>
+  <h2>[[${pageTitle}]]</h2>
+  <br>
+
+  <div th:if="${message != null}" class="alert alert-success text-center">
+    [[${message}]]
+  </div>
+
+  <form th:action="@{/account/accountEdit}" method="POST"
+        style="max-width: 700px; margin: 0 auto"
+         th:object="${user}"
+        onsubmit="return checkEmailUnique(this)">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="border border-secondary rounded p-3">
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Email:</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" th:field="*{email}" readonly="readonly" />
+        </div>
+      </div>
+      <br>
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">First Name:</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" th:field="*{firstName}" required minlength="2" maxlength="45" />
+        </div>
+      </div>
+      <br>
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Last Name:</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" th:field="*{lastName}" required minlength="2" maxlength="45" />
+        </div>
+      </div>
+      <br>
+      <div class="form-group row" >
+        <label class="col-sm-4 col-form-label">Password:</label>
+        <div class="col-sm-8">
+          <input type="password" class="form-control"
+                 placeholder="Leave field empty to keep the password unchanged."
+                 minlength="1" maxlength="15"
+                 th:field="*{password}"
+                 oninput="checkPasswordMatch(this)"/>
+        </div>
+      </div>
+      <br>
+      <div class="form-group row" >
+        <label class="col-sm-4 col-form-label">Re-type Password:</label>
+        <div class="col-sm-8">
+          <input type="password" class="form-control"
+                 id="confirmPassword"
+                 minlength="1" maxlength="15"
+                 oninput="checkPasswordMatch(this)"/>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <input type="submit" value="Save" class="btn btn-primary m-3" />
+        <input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel" />
+      </div>
+
+    </div>
+  </form>
+
+  <br>
+
+  <th:block sec:authorize="hasAuthority('Student')">
+    <form th:action="@{/students/request-teacher}" method="POST"
+          style="max-width: 700px; margin: 0 auto"
+    >
+      <div class="border border-secondary rounded p-3">
+
+        <div class="text-center">
+          <input type="submit" value="Do you want to be a Teacher?" class="btn btn-primary m-3" />
+        </div>
+
+      </div>
+    </form>
+  </th:block>
+
+  <br>
+
+  <th:block sec:authorize="hasAuthority('Student') or hasAuthority('Teacher') or hasAuthority('Admin')">
+    <form th:action="@{/account/accountDelete}" method="POST"
+          id="accountDeleteForm"
+          style="max-width: 700px; margin: 0 auto">
+      <div class="border border-secondary rounded p-3">
+        <div class="text-center">
+          <input type="submit" value="Do you want to delete your account?"
+                 class="btn btn-danger m-3 link-action" th:userId="${user.id}" />
+        </div>
+      </div>
+    </form>
+  </th:block>
+
+  <!--        MODAL WINDOW        -->
+  <div class="modal fade text-center" id="confirmModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modalTitle"></h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <span id="confirmText"></span>
+        </div>
+        <div class="modal-footer">
+          <a class="btn btn-success" href="" id="yesButton">YES</a>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">NO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  <footer th:replace="fragments :: footer" />
+
+
+
+
+</div>
+
+<!-- Place this code inside the <head> section of your HTML -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $(".link-action").on("click", function (e) {
+      e.preventDefault();
+      let link = $(this);
+      let actionText = "delete";
+      let userId = link.attr("userId");
+      let modalTitle = "Confirmation";
+      $("#modalTitle").text(modalTitle);
+      $("#yesButton").attr("href", link.attr("href"));
+      $("#confirmText").text("Are you sure you want to " + actionText + " your account? This action cannot be undone. Your data will be permanently deleted.");
+      $("#confirmModal").modal("show");
+    });
+
+    // Handle form submission when YES button in modal is clicked
+    $("#yesButton").on("click", function (e) {
+      e.preventDefault();
+      let form = $("#accountDeleteForm");
+      form.submit();
+    });
+
+  });
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+  $(document).ready(function (){
+    $("#buttonCancel").on("click", function (){
+      window.location = "[[@{/}]]";
+    });
+  })
+</script>
+
+<script type="text/javascript">
+  function checkPasswordMatch(input) {
+    const password = $('[name="password"]').val();
+    const confirmPassword = input.value;
+
+    if (password !== confirmPassword) {
+      const errorMessage = "Passwords do not match.";
+      input.setCustomValidity(errorMessage);
+    } else {
+      input.setCustomValidity("");
+    }
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+</html>

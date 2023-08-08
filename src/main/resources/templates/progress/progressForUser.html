@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments :: page_head('progress')}" />
+<body>
+<div class="container-fluid">
+    <header>
+        <div th:replace="~{navigation :: menu}" />
+    </header>
+    <br>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <h1>Skills with Progress:</h1>
+    <br/>
+    <a href="/progress">Zurück zur Studentenliste</a>
+    <br/>
+
+    <ul>
+        <li th:each="skill : ${skillTree}">
+                <span style="font-size: 28px">
+                    <b>[[${skill.skill.description}]]
+                        <th:block th:each="i: ${#numbers.sequence(1, 11)}">
+                            <i th:if="${i &lt;= skill.skill.progress}" class="fa-solid fa-star"></i>
+                            <i th:unless="${i &lt;= skill.skill.progress}" class="fa-regular fa-star"></i>
+                         </th:block>
+                    </b>
+                </span>
+
+            <ul th:if="${#lists.size(skill.children) > 0}">
+                <li th:each="child : ${skill.children}">
+                        <span style="font-size: 26px">
+                            <i>
+                                [[${child.skill.description}]]
+                                <th:block th:each="i: ${#numbers.sequence(1, 11)}">
+                                    <i th:if="${i &lt;= child.skill.progress}" class="fa-solid fa-star"></i>
+                                    <i th:unless="${i &lt;= child.skill.progress}" class="fa-regular fa-star"></i>
+                                </th:block>
+                            </i>
+                        </span>
+
+                    <ul th:if="${#lists.size(child.children) > 0}">
+                        <li th:each="grandChild : ${child.children}">
+                                <span style="font-size: 22px">
+                                    <a style="text-decoration: none;"
+                                       href="'skills/' + ${grandChild.skill.id}"
+                                       th:title="${grandChild.skill.description}">
+                                        [[${grandChild.skill.name}]]
+                                    </a>
+                                </span>
+                            <th:block th:each="i: ${#numbers.sequence(1, 11)}">
+                                <a th:href="@{/progress/{userId}/edit/{skillId}/progress/{progress}( userId=${userId}, skillId=${grandChild.skill.id}, progress=${i} )}"
+                                   style="text-decoration: none;">
+                                    <i th:if="${i &lt;= grandChild.skill.progress}" class="fa-solid fa-star"></i>
+                                    <i th:unless="${i &lt;= grandChild.skill.progress}" class="fa-regular fa-star"></i>
+                                </a>
+                            </th:block>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+
+
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+
+<body>
+
+<div th:fragment="menu">
+
+  <form th:action="@{/logout}" method="post"
+        th:hidden="true" name="logoutForm">
+    <input type="submit"/>
+  </form>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" th:href="@{/}">
+      <img th:src="@{/images/logo_matheSim.png}" style="width: 100px"/>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="topNavbar">
+      <ul class="navbar-nav">
+
+        <th:block sec:authorize="hasAuthority('Admin')">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/users}">Users</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/teachers}">Teacher</a>
+          </li>
+        </th:block>
+
+        <th:block sec:authorize="hasAuthority('Admin') or hasAuthority('Teacher')">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/skills}">Skills</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/tasks}">Task/Answer</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/students}">Students</a>
+          </li>
+        </th:block>
+
+        <th:block sec:authorize="hasAuthority('Admin') or hasAuthority('Teacher') or hasAuthority('Student')">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/exams}">Test</a>
+          </li>
+          <li class="nav-item"  >
+            <a class="nav-link" th:href="@{/results}">Results</a>
+          </li>
+          <li class="nav-item"  >
+            <a class="nav-link" th:href="@{/progress}">Progress</a>
+          </li>
+        </th:block>
+
+        <th:block sec:authorize="hasAuthority('Admin')">
+          <li class="nav-item"  >
+            <a class="nav-link" th:href="@{/settings}">Settings</a>
+          </li>
+        </th:block>
+
+        <th:block sec:authorize="hasAuthority('Admin') or hasAuthority('Teacher') or hasAuthority('Student')">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown"
+               th:href="@{/account}"
+               sec:authentication="principal.fullName" ></a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" id="logoutLink" th:href="@{/logout}">Logout</a>
+            </div>
+          </li>
+        </th:block>
+
+      </ul>
+    </div>
+  </nav>
+
+</div>
+
+
+
+</body>
+</html>

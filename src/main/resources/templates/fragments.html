@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+
+<head th:fragment="page_head(title)">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+  <title>[[${title}]] - [[${SITE_NAME}]]</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}" />
+  <link rel="stylesheet" type="text/css" th:href="@{/css/icon_colors.css}" />
+
+  <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet"/>
+  <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+  <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+
+  <script type="text/javascript" th:src="@{/js/common.js}"></script>
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+
+<th th:fragment="column_link(fieldName, columnLabel)">
+  <a class="text-white"
+     th:href="@{'/users/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir=' +
+           ${sorField == fieldName ? sortDir : reverseSortDir} +
+           ${keyword != null ? '&keyword=' + keyword : '' }}">
+    [[${columnLabel}]]
+  </a>
+  <span th:if="${sortField == fieldName}"
+        th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down' }">
+        </span>
+</th>
+
+<a th:fragment="page_link(pageNum, label)"
+   class="page-link"
+   th:href="@{'/users/page/' + ${pageNum} + '?sortField=' + ${sortField} +
+       '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : '' } }">
+  [[${label}]]
+</a>
+
+<div th:fragment="footer" class="text-center m-3">
+  <footer>
+    <p>
+      [[${COPYRIGHT}]]
+    </p>
+  </footer>
+</div>
+
+        <div th:fragment="modal_window">
+          <!--        MODAL WINDOW        -->
+              <div class="modal fade text-center" id="modalDialog">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title" id="modalTitle"></h4>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <span id="modalBody"></span>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          <!--        MODAL WINDOW        -->
+        </div>
+
+</body>

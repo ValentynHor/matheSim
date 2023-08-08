@@ -1,0 +1,27 @@
+*.icon-white {color: white}
+
+*.icon-silver {color: silver}
+
+*.icon-green {
+    color: green;
+    text-decoration: none;
+}
+*.icon-red {
+    color: red;
+    text-decoration: none;
+}
+
+*.icon-dark {
+    color: gray;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    color: blue;
+}
+
+a{
+    text-decoration: none;
+}
+

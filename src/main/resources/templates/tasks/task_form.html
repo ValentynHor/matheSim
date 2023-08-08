@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments :: page_head('task_form')" />
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="navigation :: menu" />
+    </header>
+
+    <div>
+        <h2>Manage Tasks | [[${pageTitle}]]</h2>
+    </div>
+
+    <form th:action="@{/tasks/save}" method="POST"
+          style="max-width: 700px; margin: 0 auto"
+          enctype="multipart/form-data"
+          th:object="${task}">
+
+        <div class="border border-secondary rounded p-3" th:each="task_edit : ${task}">
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Name:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" th:field="*{name}"/>
+                </div>
+            </div>
+            </br>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Aufgabe:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" th:field="*{mission}"/>
+                </div>
+            </div>
+            </br>
+            <div class="form-group row" th:if="${task_edit.mission != null}">
+                <label class="col-sm-4 col-form-label">View</label>
+                <div class="col-sm-8">
+                    <input type="hidden" class="form-control" th:text="${task_edit.mission}"/>
+                </div>
+            </div>
+            </br>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Aufgabestellung:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" th:field="*{question}"/>
+                </div>
+            </div>
+            </br>
+            <div class="form-group row" th:if="${task_edit.question != null}">
+                <label class="col-sm-4 col-form-label">View</label>
+                <div class="col-sm-8">
+                    <input type="hidden" class="form-control" th:text="${task_edit.question}"/>
+                </div>
+            </div>
+            </br>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Variant:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" th:field="*{variant}"/>
+                </div>
+            </div>
+            </br>
+
+            <div class="text-center">
+                <input type="submit" value="Save" class="btn btn-primary m-3" />
+                <input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel" />
+            </div>
+
+        </div>
+    </form>
+
+
+
+
+
+
+
+    <footer th:replace="fragments :: footer" />
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function (){
+        $("#buttonCancel").on("click", function (){
+            window.location = "[[@{/tasks}]]";
+        });
+    });
+</script>
+
+</body>
+</html>

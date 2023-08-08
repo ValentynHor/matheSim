@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments :: page_head('Settings')" />
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="navigation :: menu" />
+    </header>
+
+    <h2>Settings</h2>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <div>
+        <ul class="nav nav-tabs" id="settingsTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" href="#general"
+                   role="tab" data-bs-toggle="tab">General
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#mail_server"
+                   role="tab" data-bs-toggle="tab">Mail Server
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#mail_templates"
+                   role="tab" data-bs-toggle="tab">Mail Templates
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active p-3" id="general" role="tabpanel">
+                <div th:replace="settings/general :: content " />
+            </div>
+            <div class="tab-pane p-3" id="mail_server" role="tabpanel">
+                <div th:replace="settings/mail_server :: content " />
+            </div>
+            <div class="tab-pane p-3" id="mail_templates" role="tabpanel">
+                <div th:replace="settings/mail_templates :: content " />
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <footer th:replace="fragments :: footer" />
+
+
+
+
+</div>
+
+<script type="text/javascript">
+
+    csrfHeaderName = "[[${_csrf.headerName}]]";
+    csrfValue = "[[${_csrf.token}]]";
+
+
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head th:replace="~{fragments :: page_head('exams')}" />
+
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="~{navigation :: menu}" />
+    </header>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <h2>All Tests:</h2>
+    <br>
+
+    <th:block sec:authorize="hasAuthority('Admin') or hasAuthority('Teacher')">
+        <th:block th:if="${exams.isEmpty()}">
+            <div>
+                <a href="/tasks">New Test</a>
+                <br>
+            </div>
+
+        </th:block>
+    </th:block>
+
+    <th:block sec:authorize="hasAuthority('Admin') or hasAuthority('Teacher')">
+        <div style="max-width: 700px; margin: 0 auto;">
+            <table class="table table-bordered table-auto">
+                <thead>
+                <tr class="text-center">
+                    <th>Tests:</th>
+                    <th>For Students:</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:if="${not exams.isEmpty()}">
+                    <th:block th:each="exam, iterStat : ${exams}">
+                        <tr>
+                            <td class="text-center">
+                                <a th:href="@{/exams/{examId}(examId=${exam.id})}" th:title="'Zum Test Nr. ' + ${exam.id}">
+                                    [[${iterStat.index + 1}]].Test(ID:[[${exam.id}]])
+                                </a>
+                            </td>
+                            <td>
+                                <div class="container">
+                                    <div class="row">
+
+                                        <div class="col">
+                                            <h5 class="text-center">Your Students</h5>
+                                            <table class="table table-bordered table-auto">
+                                                <th:block th:each="student : ${allStudentLists[exam.id]}">
+                                                    <tr>
+                                                        <td th:text="${student.id}"></td>
+                                                        <td th:text="${student.email}"></td>
+                                                        <td>
+                                                            <a th:href="@{'/students/' + ${student.id} + '/addToExam/' + ${exam.id}}"
+                                                               class="link-action fa-solid fa-user-plus icon-green"
+                                                               style="text-decoration: none"
+                                                               th:examId="${exam.id}"
+                                                               th:userId="${student.id}"
+                                                               title="add a student"></a>
+                                                        </td>
+                                                    </tr>
+                                                </th:block>
+
+                                            </table>
+                                        </div>
+
+                                        <div class="col">
+                                            <h5 class="text-center">Added Students</h5>
+                                            <table class="table table-bordered table-auto">
+                                                <tr th:each="student : ${exam.examUsers}">
+                                                    <td th:text="${student.id}"></td>
+                                                    <td th:text="${student.email}"></td>
+                                                    <td>
+                                                        <a th:href="@{'/students/' + ${student.id} + '/removeFromExam/' + ${exam.id}}"
+                                                           class="link-action fa-solid fa-user-minus icon-green"
+                                                           style="text-decoration: none"
+                                                           th:examId="${exam.id}"
+                                                           th:userId="${student.id}"
+                                                           title="remove a student"></a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td class="text-center">
+                                <a class="fas fa-trash icon-green fa-2x link-delete "
+                                   th:href="@{'/exams/delete/' + ${exam.id}}"
+                                   th:examId="${exam.id}" title="Delete this exam"></a>
+                            </td>
+                        </tr>
+                    </th:block>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+
+    <th:block sec:authorize="hasAuthority('Student')">
+        <th:block th:if="${exams.isEmpty()}">
+            <h3>You don't have any tasks/exams yet</h3>
+        </th:block>
+        <th:block th:if="${not exams.isEmpty()}">
+            <th:block th:each="exam, iterStat : ${exams}">
+                <ul>
+                    <li>
+                        <a th:href="@{/exams/{examId}(examId=${exam.id})}" th:title="'Zum Test Nr. ' + ${exam.id}"
+                           th:text="'Nr. ' + ${iterStat.index + 1} + ' - Test'"></a>
+                    </li>
+                </ul>
+            </th:block>
+        </th:block>
+    </th:block>
+
+
+
+
+
+
+
+    <footer th:replace="~{fragments :: footer}" />
+
+    <!--        MODAL WINDOW        -->
+    <div class="modal fade text-center" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                    </div>
+                <div class="modal-body">
+                    <span id="confirmText"></span>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success" href="" id="yesButton">YES</a>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function (){
+        $(".link-delete").on("click",function (e){
+            e.preventDefault();
+            let link = $(this);
+            let examId = link.attr("examId");
+            $("#yesButton").attr("href",link.attr("href"));
+            $("#confirmText").text("Are you sure you want to delete this test ID:" + examId + "?");
+            $("#confirmModal").modal("show");
+        });
+
+        $(".link-action").on("click", function (e) {
+            e.preventDefault();
+            let link = $(this);
+            let examId = link.attr("examId");
+            let userId = link.attr("userId");
+            let actionText = link.hasClass("fa-user-plus") ? "add" : "remove";
+            let modalTitle = actionText.charAt(0).toUpperCase() + actionText.slice(1) + " Students";
+            $("#modalTitle").text(modalTitle);
+            $("#yesButton").attr("href", link.attr("href"));
+            $("#confirmText").text("Are you sure you want to " + actionText + " student (ID:" + userId + ") to test (ID:" + examId + ")?");
+            $("#confirmModal").modal("show");
+        });
+    });
+</script>
+
+
+
+</body>
+</html>

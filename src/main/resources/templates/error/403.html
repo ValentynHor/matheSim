@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Error')" />
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="navigation :: menu" />
+    </header>
+
+    <div class="m-3">
+        <h2>Sorry, you don't have permission to access this page</h2>
+    </div>
+
+    <footer th:replace="fragments :: footer" />
+
+</div>
+</body>
+</html>

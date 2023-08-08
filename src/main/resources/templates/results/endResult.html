@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments :: page_head('results')" />
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="navigation :: menu" />
+    </header>
+
+    <h2>Testergebnisse:</h2>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <br/>
+    <div>
+        <a th:href="@{'/results/userId/' + ${userId} + '/examId/' + ${examId} + '/' + ${tryCount} + '/export/pdf'}">Export Result to PDF</a>
+        &nbsp;||&nbsp;
+        <a href="/results">Zurück zu allen Testergebnissen</a>
+    </div>
+
+    <br/>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="border p-3">
+                    <th:block th:each="task : ${taskList}">
+                        <div class="container">
+                            <div class="row justify-content-center align-items-center" >
+                                <div class="card " >
+                                    <div class="card-body">
+                                        <h5 class="card-title  inputTaskId">
+                                            Task [[${task.id}]]: [[${task.name}]]
+                                        </h5>
+                                        <p class="card-text">[[${task.mission}]]</p>
+                                        <p><b>Aufgabestellung:</b></p>
+                                        <p>[[${task.question}]]</p>
+                                        <p><small>[[${task.variant}]]</small></p>
+                                        <div class="container d-flex justify-content-center">
+                                            <table class="table table-bordered" style="width: 300px">
+
+                                                <tr th:each="result : ${task.results}" class="text-center" >
+                                                    <th:block th:if="${result.isChecked == result.isRight}">
+                                                        <td class="text-success">[[${result.name}]]</td>
+                                                    </th:block>
+                                                    <th:block th:unless="${result.isChecked == result.isRight}" >
+                                                        <td class="text-danger">[[${result.name}]]</td>
+                                                    </th:block>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <footer th:replace="fragments :: footer" />
+
+    <div th:replace="fragments :: modal_window" />
+
+
+</div>
+
+<script th:inline="javascript">
+
+
+</script>
+</body>
+</html>

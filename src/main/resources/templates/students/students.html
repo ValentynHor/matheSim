@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head th:replace="~{fragments :: page_head('students')}" />
+
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="~{navigation :: menu}" />
+    </header>
+    <br>
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col">
+                <h3 class="text-center">All Students:</h3>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${allStudentsList}">
+                        <td>  [[${student.id}]] </td>
+                        <td>  [[${student.email}]] </td>
+                        <td>  [[${student.firstName}]] </td>
+                        <td>  [[${student.lastName}]] </td>
+                        <td>
+                            <a th:href="@{'/students/add/' + ${student.id}}"
+                               class="link-action fa-solid fa-user-plus fa-2x icon-green"
+                               style="text-decoration: none"
+                               title="add a student"></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col">
+                <h2>Your Student</h2>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${myStudentsList}">
+                        <td>  [[${student.id}]] </td>
+                        <td>  [[${student.email}]] </td>
+                        <td>  [[${student.firstName}]] </td>
+                        <td>  [[${student.lastName}]] </td>
+                        <td>
+                            <a th:href="@{'/students/remove/' + ${student.id}}"
+                               class="link-action fa-solid fa-user-minus fa-2x icon-green"
+                               style="text-decoration: none"
+                               title="remove a student"></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}" />
+
+    <!--        MODAL WINDOW        -->
+    <div class="modal fade text-center" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalTitle"></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span id="confirmText"></span>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success" href="" id="yesButton">YES</a>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".link-action").on("click", function (e) {
+            e.preventDefault();
+            let link = $(this);
+            let actionText = link.hasClass("fa-user-plus") ? "add" : "remove";
+            let modalTitle = actionText.charAt(0).toUpperCase() + actionText.slice(1) + " Students";
+            $("#modalTitle").text(modalTitle);
+            $("#yesButton").attr("href", link.attr("href"));
+            $("#confirmText").text("Are you sure you want to " + actionText + " student for you ?");
+            $("#confirmModal").modal("show");
+        });
+    });
+</script>
+
+</body>
+</html>

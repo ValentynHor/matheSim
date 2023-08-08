@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head th:replace="~{fragments :: page_head('exams')}" />
+
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="~{navigation :: menu}" />
+    </header>
+
+    <br/>
+    <a href="/exams" title="Zurück zum Testliste">Zurück zum Testliste</a>
+    <br/>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <th:block th:each="exam : ${exams}" >
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="border p-3">
+                        <input type="hidden" id="examId" th:value="${exam.id}" />
+
+                        <th:block th:each="task : ${exam.tasks}">
+                            <div class="container">
+                                <div class="row justify-content-center align-items-center" >
+                                    <div class="card " >
+                                        <div class="card-body">
+                                            <h5 class="card-title  inputTaskId">
+                                                Task [[${task.id}]]: [[${task.name}]]
+                                            </h5>
+                                            <p class="card-text">[[${task.mission}]]</p>
+                                            <p><b>Aufgabestellung:</b></p>
+                                            <p>[[${task.question}]]</p>
+                                            <p><small>[[${task.variant}]]</small></p>
+                                            <div class="container d-flex justify-content-center">
+                                                <table class="table table-bordered" style="width: 300px">
+                                                    <tr th:each="answer : ${task.answers}" >
+                                                        <td>[[${answer.name}]]</td>
+                                                        <td class="text-center">
+                                                            <input type="hidden" th:data-id="${task.id}">
+                                                            <input type="checkbox" class="inputAnswer" th:data-answer-id="${answer.id}" />
+                                                            <input type="hidden" th:data-name="${answer.name}">
+                                                            <input type="hidden" th:data-isRight="${answer.isRight}">
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br>
+                        </th:block>
+                        <br/>
+                        <div class="row justify-content-center mt-3">
+                            <div class="col-auto">
+                                <button id="checkTest" class="btn btn-primary">Check Test</button>
+                            </div>
+                        </div>
+
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </th:block>
+
+    <div th:replace="~{fragments :: footer}" />
+
+    <!--        MODAL WINDOW        -->
+    <div class="modal fade text-center" id="modalDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalTitle"></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span id="modalBody"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script th:inline="javascript">
+
+
+</script>
+
+<script th:inline="javascript">
+
+    csrfHeaderName = [[${_csrf.headerName}]];
+    csrfValue = [[${_csrf.token}]];
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const createTestButton = document.getElementById("checkTest");
+        createTestButton.addEventListener("click", function() {
+            const examId = document.getElementById("examId").value;
+            checkAnswers(examId);
+        });
+
+        function checkAnswers(examId) {
+            const results = [];
+
+            document.querySelectorAll('.inputAnswer').forEach(function(checkbox) {
+                const taskId = checkbox.parentElement.querySelector('input[data-id]').getAttribute('data-id');
+                const answerId = checkbox.getAttribute('data-answer-id');
+                const answerName = checkbox.parentElement.querySelector('input[data-name]').getAttribute('data-name');
+                const isRight = checkbox.parentElement.querySelector('input[data-isRight]').getAttribute('data-isRight');
+                const isChecked = checkbox.checked;
+
+                results.push({
+                    'taskId': taskId,
+                    'answerId': answerId,
+                    'answerName': answerName,
+                    'isRight': isRight,
+                    'isChecked': isChecked
+                });
+            });
+
+            saveResult(examId,results);
+        }
+
+        function saveResult(examId,results) {
+            const data = {
+                'examId': examId,
+                'results': results
+            };
+            $.ajax({
+                url: "/saveResult",
+                method: "POST",
+                contentType: "application/json",
+                headers: {
+                    [csrfHeaderName]: csrfValue
+                },
+                data: JSON.stringify(data),
+                success: function() {
+                    showWarningModal("Exam erfolgreich gespeichert!");
+                },
+                error: function() {
+                    showErrorModal("Fehler beim Speichern des Ergebnisse!");
+                }
+            });
+
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    csrfHeaderName = [[${_csrf.headerName}]];
+    csrfValue = [[${_csrf.token}]];
+
+    function showModalDialog(title, message){
+        $("#modalTitle").text(title);
+        $("#modalBody").text(message);
+        $("#modalDialog").modal("show");
+    }
+    function showWarningModal(message){
+        showModalDialog("Meldung", message);
+    }
+    function showErrorModal(message){
+        showModalDialog("Error",message);
+    }
+</script>
+
+
+
+
+</body>
+</html>

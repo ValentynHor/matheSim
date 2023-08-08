@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head th:replace="fragments :: page_head('tasks')" />
+
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="navigation :: menu" />
+    </header>
+
+
+
+
+    <div>
+        <h2>Testerstellung</h2>
+        <a th:href="@{/tasks/new}" >Erstelle neue Aufgabe</a>
+        ||
+        <a th:href="@{/answers/new}">Erstelle neue Antwort</a>
+        <br/><br/>
+    </div>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h2>Aufgaben:</h2>
+                <ul id="leftList" style="list-style-type: none;">
+                    <th:block th:each="task : ${taskList}">
+                        <li >
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        Task [[${task.id}]]: [[${task.name}]]
+                                        &nbsp;&nbsp;
+                                        <a class="fas fa-edit icon-green fa-2x " th:href="@{'/tasks/edit/' + ${task.id}}" title="Edit this task"></a>
+                                        &nbsp;&nbsp;
+                                        <a class="fas fa-trash icon-dark fa-2x link-delete" th:href="@{'/tasks/delete/' + ${task.id}}" title="Delete this task"></a>
+                                        &nbsp;&nbsp;
+                                        <input type="button" value="Add to test"
+                                               th:data-id="${task.id}"
+                                               class="btn btn-primary addToRightTaskList">
+                                    </h5>
+                                    <p class="card-text">[[${task.mission}]]</p>
+                                    <p><b>Aufgabestellung:</b></p>
+                                    <p>[[${task.question}]]</p>
+                                    <p><small>[[${task.variant}]]</small></p>
+
+                                    <div class="dropdown">
+                                        <button class="btn border-secondary dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            Mögliche Antworten/Fragestellungen
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <ul>
+                                                <div th:each="answer : ${task.answers}">
+                                                    <li>
+                                                        [[${answer.name}]]
+                                                        &nbsp;&nbsp;
+                                                        <a class="fas fa-edit  icon-green " th:href="@{'/answers/edit/' + ${answer.id}}" title="Edit this answer"></a>
+                                                        &nbsp;&nbsp;
+                                                        <a class="fas fa-trash  icon-dark link-delete" th:href="@{'/answers/delete/' + ${answer.id}}" t title="Delete this answer"></a>
+                                                    </li>
+                                                </div>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </br>
+                        </li>
+                    </th:block>
+                </ul>
+            </div>
+            <div class="col -6">
+                <h2>Hinzugefügte Aufgaben</h2>
+                <ul id="rightList" style="list-style-type: none;">
+                </ul>
+                <button id="createTest" class="btn btn-success"> Create Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!--        MODAL WINDOW        -->
+    <div class="modal fade text-center" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                    </div>
+                <div class="modal-body">
+                    <span id="confirmText"></span>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success" href="" id="yesButton">YES</a>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="fragments :: footer" />
+    <div th:replace="fragments :: modal_window" />
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function (){
+        $(".link-delete").on("click",function (e){
+            e.preventDefault();
+            let link = $(this);
+            $("#yesButton").attr("href",link.attr("href"));
+            $("#confirmText").text("Are you sure you want to delete this item?");
+            $("#confirmModal").modal("show");
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    csrfHeaderName = "[[${_csrf.headerName}]]";
+    csrfValue = "[[${_csrf.token}]]";
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const rightList = document.getElementById("rightList");
+        const addToRightTaskListButtons = document.querySelectorAll(".addToRightTaskList");
+        const createTestButton = document.getElementById("createTest");
+
+        addToRightTaskListButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                moveTaskToRightList(this);
+            });
+        });
+
+        createTestButton.addEventListener("click", function() {
+            createTest();
+        });
+
+        function moveTaskToRightList(button) {
+            const taskId = button.getAttribute("data-id");
+            const leftTaskName = button.parentElement.textContent.trim();
+            const rightListItems = rightList.querySelectorAll("li[data-task-id='" + taskId + "']");
+            if (rightListItems.length === 0) {
+                const newTaskItem = document.createElement("li");
+                newTaskItem.setAttribute("data-task-id", taskId);
+                newTaskItem.textContent = leftTaskName;
+                const removeButton = document.createElement("input");
+                removeButton.type = "button";
+                removeButton.value = "-";
+                removeButton.className = "btn btn-danger";
+                removeButton.addEventListener("click", function() {
+                    removeTask(this.parentElement);
+                });
+                newTaskItem.appendChild(removeButton);
+                rightList.appendChild(newTaskItem);
+            }else{
+                showWarningModal("Es gibt schon solche Aufgabe");
+            }
+
+        }
+
+        function removeTask(taskItem) {
+            taskItem.parentNode.removeChild(taskItem);
+        }
+
+        function createTest() {
+            const rightList = document.getElementById("rightList");
+            const rightListItems = rightList.getElementsByTagName("li");
+            const testTasks = [];
+            for (let i = 0; i < rightListItems.length; i++) {
+                const taskId = rightListItems[i].getAttribute("data-task-id");
+                testTasks.push({ id: taskId });
+            }
+
+            if (testTasks.length === 0) {
+                showWarningModal("Liste ist leer. Hinzufüge Aufgaben!");
+            }else {
+                $.ajax({
+                    url: "/saveExam",
+                    method: "POST",
+                    contentType: "application/json",
+                    headers: {
+                        [csrfHeaderName]: csrfValue
+                    },
+                    data: JSON.stringify(testTasks),
+                    success: function() {
+                        showWarningModal("Exam erfolgreich gespeichert!");
+
+                    },
+                    error: function() {
+                        showErrorModal("Fehler beim Speichern des Exams!");
+                    }
+                });
+            }
+        }
+    });
+</script>
+<script type="text/javascript">
+    function showModalDialog(title, message){
+        $("#modalTitle").text(title);
+        $("#modalBody").text(message);
+        $("#modalDialog").modal("show");
+    }
+    function showWarningModal(message){
+        showModalDialog("Meldung", message);
+    }
+    function showErrorModal(message){
+        showModalDialog("Error",message);
+    }
+</script>
+</body>
+</html>

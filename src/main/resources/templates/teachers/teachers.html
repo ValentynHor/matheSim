@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head th:replace="~{fragments :: page_head('teachers')}" />
+
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="~{navigation :: menu}" />
+    </header>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <br>
+    <h3 class="text-center">New Teachers:</h3>
+    <br>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>User ID</th>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="teacher : ${newTeachersList}">
+            <td>  [[${teacher.id}]] </td>
+            <td>  [[${teacher.email}]] </td>
+            <td>  [[${teacher.firstName}]] </td>
+            <td>  [[${teacher.lastName}]] </td>
+            <td>
+                <a th:href="@{'/teachers/add/' + ${teacher.id}}"
+                   class="link-action fa-solid fa-user-plus fa-2x icon-green"
+                   style="text-decoration: none"
+                   th:userId="${teacher.id}"
+                   title="add a teacher"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <h3 class="text-center">All Teachers:</h3>
+    <br>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>User ID</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="teacher : ${teachersList}">
+                <td>  [[${teacher.id}]] </td>
+                <td>  [[${teacher.email}]] </td>
+                <td>  [[${teacher.firstName}]] </td>
+                <td>  [[${teacher.lastName}]] </td>
+                <td>
+                    <a th:href="@{'/teachers/revoke/' + ${teacher.id}}"
+                       class="link-action fa-solid fa-user-minus fa-2x icon-green"
+                       style="text-decoration: none"
+                       th:userId="${teacher.id}"
+                       title="stop being a teacher"></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <footer th:replace="~{fragments :: footer}" />
+
+    <!--        MODAL WINDOW        -->
+    <div class="modal fade text-center" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalTitle"></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span id="confirmText"></span>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success" href="" id="yesButton">YES</a>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".link-action").on("click", function (e) {
+            e.preventDefault();
+            let link = $(this);
+            let actionText = link.hasClass("fa-user-plus") ? "add" : "revoke";
+            let userId = link.attr("userId");
+            let modalTitle = actionText.charAt(0).toUpperCase() + actionText.slice(1) + " Teacher Rights";
+            $("#modalTitle").text(modalTitle);
+            $("#yesButton").attr("href", link.attr("href"));
+            $("#confirmText").text("Are you sure you want to " + actionText + " teacher rights for user ID " + userId + "?");
+            $("#confirmModal").modal("show");
+        });
+    });
+</script>
+
+</body>
+</html>

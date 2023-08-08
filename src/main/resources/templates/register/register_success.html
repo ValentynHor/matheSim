@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments :: page_head(${pageTitle})" />
+<body>
+<div class="container-fluid">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" th:href="@{/}">
+            <img th:src="@{/images/logo_matheSim.png}" style="width: 100px"/>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="topNavbar">
+            <ul class="navbar-nav">
+            </ul>
+        </div>
+    </nav>
+
+    <div>&nbsp;</div>
+
+    <div class="text-center">
+        <h2>Student Registration</h2>
+        <h4>You have registered successfully as a student</h4>
+        <p>Please check you email to verify our account. </p>
+        <p>
+            <a th:href="@{/login}">Login here</a>
+        </p>
+    </div>
+
+    <div>&nbsp;</div>
+
+    <footer th:replace="fragments :: footer" />
+</div>
+</body>
+</html>

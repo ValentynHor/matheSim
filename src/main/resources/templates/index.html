@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments :: page_head('Home')}" />
+<body>
+<div class="container-fluid">
+
+    <header>
+        <div th:replace="~{navigation :: menu}" />
+    </header>
+
+
+
+
+
+
+
+    <div class="container" style="font-size: 24px"t>
+        <br>
+        <h2>Home - [[${SITE_NAME}]] </h2>
+        <br>
+
+        <p>This app demonstrates my proficiency in Spring Java, HTML-Thymeleaf, and a bit of JavaScript.</p>
+        <p>It is designed for students learning mathematics and includes three roles:</p>
+        <ol>
+            <li>Admin - has full control over the application.</li>
+            <li>Teacher - can create tests/answers, assign tasks to students, manage students and their progress.</li>
+            <li>Student - can complete tasks/tests, view results, and track their progress.</li>
+        </ol>
+        <p>The app showcases various features such as user authentication, role-based access control, test creation, result tracking, and more.</p>
+        <p>It serves as a practical showcase of my skills in building web applications using the mentioned technologies.</p>
+
+
+
+    </div>
+
+
+
+
+    <footer th:replace="~{fragments :: footer}" />
+
+</div>
+
+</body>
+</html>

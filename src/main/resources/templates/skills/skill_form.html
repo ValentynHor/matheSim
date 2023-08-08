@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en">
+
+<head th:replace="fragments :: page_head(${pageTitle})" />>
+
+<body>
+<div class="container-fluid">
+  <header>
+    <div th:replace="navigation :: menu" />
+  </header>
+  <div>
+    <h2>Edit Skill | [[${pageTitle}]]</h2>
+  </div>
+
+  <form th:action="@{/skills/save}"
+        style="max-width: 700px; margin: 0 auto"
+        enctype="multipart/form-data"
+        th:object="${skills}"
+        method="post">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <th:block th:each="skill : ${skills}">
+      <div class="form-group row mb-3">
+        <label class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control"
+                 name="skill.name"
+                 th:value="${skill.name}" readonly/>
+        </div>
+      </div>
+
+      <div class="form-group row mb-3">
+        <label class="col-sm-2 col-form-label">Description</label>
+        <div class="col-sm-10">
+                <textarea rows="5" class="form-control"
+                          th:text="${skill.description}"
+                          th:field="*{description}"
+                          required name="skill.description">
+                    [[${description}]]
+                </textarea>
+        </div>
+      </div>
+    </th:block>
+
+
+    <div class="text-center">
+      <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+
+  </form>
+
+
+
+
+
+
+
+</div>
+</body>
+
+</html>

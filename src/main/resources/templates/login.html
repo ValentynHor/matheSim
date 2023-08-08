@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="en"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments :: page_head('login')}" />
+<body>
+<div class="container-fluid text-center">
+
+    <br>
+
+    <div>
+        <img th:src="@{/images/logo_matheSim.png}" style="width: 350px; height: auto;" />
+    </div>
+    <br>
+    <div>
+        <a th:href="@{/home}">home</a>
+    </div>
+
+
+    <br>
+
+    <form th:action="@{/login}" method="post"
+          enctype="multipart/form-data"
+          style="max-width: 350px; margin: 0 auto;">
+
+
+        <div th:if="${param.error}">
+            <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+        </div>
+
+        <div th:if="${param.logout}">
+            <p class="text-warning">You have been logged out.</p>
+        </div>
+
+        <div class="border border-secondary p-3 rounded">
+
+            <div>
+                <h2>Student Login</h2>
+            </div>
+            <br>
+            <p>
+                <input type="email" name="email" class="form-control" placeholder="E-mail" required/>
+            </p>
+            <p>
+                <input type="password" name="password" class="form-control" placeholder="Password" required />
+            </p>
+            <p>
+                <input type="checkbox" name="remember-me" />
+                &nbsp;Remember Me
+            </p>
+            <p>
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </p>
+            <div>
+                Don't have an account?
+                <a th:href="@{/register}" title="registration"><b>Sing up</b></a>
+            </div>
+            <br>
+        </div>
+    </form>
+
+
+
+    <footer th:replace="~{fragments :: footer}" />
+</div>
+
+
+
+
+
+
+</body>
+</html>
