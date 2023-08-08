@@ -46,4 +46,4 @@ By including the ability for teachers to customize skill assignments and rate st
 For any inquiries or feedback, please contact me.
 
 JUNIOR_JAVA_DEVELOPER == Valentyn_Hordiychuk
-valentyn.hordiychuk@gmail.com.
+### valentyn.hordiychuk@gmail.com.
