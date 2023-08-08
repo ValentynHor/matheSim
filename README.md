@@ -1,5 +1,5 @@
 # Mathe Simulator
-I created this app to demonstrate my proficiency in Spring and Thymeleaf.
+I created this app to demonstrate my proficiency in Spring, PostgreSQL, Maven and Hibernate.
 
 ## Overview
 This app is designed for students learning mathematics. 
