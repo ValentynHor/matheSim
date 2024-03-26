@@ -8,11 +8,15 @@ It provides various features to help students practice and test their knowledge.
 ## Technologies Used
 - Spring
 - Spring Security
+- Maven
 - Hibernate
+- PostgreSQL
 - Oauth2
 - HTML-Thymeleaf
 - JavaScript
 - CSS-Bootstrap
+- JUnit
+- Docker
 
 ## Features
 ### User Authentication and Role-Based Access Control
@@ -49,5 +53,5 @@ By including the ability for teachers to customize skill assignments and rate st
 ## Contact Information
 For any inquiries or feedback, please contact me.
 
-JUNIOR_JAVA_DEVELOPER == Valentyn_Hordiychuk
+JAVA_DEVELOPER == Valentyn_Hordiychuk
 ### valentyn.hordiychuk@gmail.com.
