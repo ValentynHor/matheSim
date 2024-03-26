@@ -7,8 +7,12 @@ It provides various features to help students practice and test their knowledge.
 
 ## Technologies Used
 - Spring
+- Spring Security
+- Hibernate
+- Oauth2
 - HTML-Thymeleaf
 - JavaScript
+- CSS-Bootstrap
 
 ## Features
 ### User Authentication and Role-Based Access Control
