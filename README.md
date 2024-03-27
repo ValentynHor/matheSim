@@ -16,7 +16,6 @@ It provides various features to help students practice and test their knowledge.
 - JavaScript
 - CSS-Bootstrap
 - JUnit
-- Docker
 
 ## Features
 ### User Authentication and Role-Based Access Control
